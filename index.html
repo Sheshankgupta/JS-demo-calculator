@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+        }
+
+        #calc-container {
+            max-width: 300px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #screen {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 10px;
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-align: right;
+            height: 20px;
+        }
+
+        .num-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .num,
+        .op {
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 10px;
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+        }
+
+        .op-rows {
+            display: flex;
+        }
+
+        .op-rows .op {
+            margin-right: 5px;
+            width: 20px;
+        }
+
+        .op-rows .op:last-child {
+            margin-right: 0;
+        }
+
+        #extras {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .memoryplus,
+        .memoryminus {
+            background-color: #ddd;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="calc-container">
+        <div id="screen"></div>
+        <div id="calc-funcs">
+            <div id="nums">
+                <div class="num-row">
+                    <div class="num" onclick="vals(this)">1</div>
+                    <div class="num" onclick="vals(this)">2</div>
+                    <div class="num" onclick="vals(this)">3</div>
+                </div>
+                <div class="num-row">
+                    <div class="num" onclick="vals(this)">4</div>
+                    <div class="num" onclick="vals(this)">5</div>
+                    <div class="num" onclick="vals(this)">6</div>
+                </div>
+                <div class="num-row">
+                    <div class="num" onclick="vals(this)">7</div>
+                    <div class="num" onclick="vals(this)">8</div>
+                    <div class="num" onclick="vals(this)">9</div>
+                </div>
+                <div class="num-row">
+                    <div class="num" onclick="vals(this)">0</div>
+                    <div class="op" onclick="reset()">AC</div>
+                    <div class="op" onclick="solve()">=</div>
+                </div>
+            </div>
+            <div id="opeartions">
+                <div class="op-rows">
+                    <div class="op" onclick="operations(this)">+</div>
+                    <div class="op" onclick="operations(this)">-</div>
+                    <div class="op" onclick="operations(this)">*</div>
+                    <div class="op" onclick="operations(this)">/</div>
+                    <div class="op" onclick="operations(this)">(</div>
+                    <div class="op" onclick="operations(this)">)</div>
+                </div>
+            </div>
+            <div id="extras">
+                <div class="memoryplus" onclick="mp()">M+</div>
+                <div class="memoryminus" onclick="mm()">M-</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let values = document.getElementById("screen").innerHTML;
+        window.onload = () => {
+            localStorage.removeItem("memoryplus");
+            localStorage.removeItem("memoryminus");
+        }
+        function screen(val) {
+            values = String(values) + String(val);
+            document.getElementById("screen").innerHTML = values;
+        }
+
+        function vals(e) {
+            screen(e.textContent);
+        }
+
+        function operations(e) {
+            screen(e.textContent);
+        }
+
+        function reset() {
+            if (values !== "") {
+                values = '';
+                document.getElementById('screen').innerHTML = "";
+            }
+        }
+
+        function solve() {
+            let result = eval(values);
+            if (localStorage.getItem("memoryplus") || localStorage.getItem("memoryminus")) {
+                let memoryPlus = Number(localStorage.getItem("memoryplus") || 0);
+                let memoryMinus = Number(localStorage.getItem("memoryminus") || 0);
+                result += memoryPlus - memoryMinus;
+                localStorage.removeItem("memoryplus");
+                localStorage.removeItem("memoryminus");
+            }
+            document.getElementById("screen").innerHTML = result;
+            values = result.toString();
+        }
+
+        function mp() {
+            let currentValue = eval(values);
+            let memoryPlus = parseFloat(localStorage.getItem("memoryplus") || 0);
+            localStorage.setItem("memoryplus", (memoryPlus + currentValue).toString());
+        }
+
+        function mm() {
+            let currentValue = eval(values);
+            let memoryMinus = parseFloat(localStorage.getItem("memoryminus") || 0);
+            localStorage.setItem("memoryminus", (memoryMinus + currentValue).toString());
+        }
+
+    </script>
+</body>
+
+</html>
